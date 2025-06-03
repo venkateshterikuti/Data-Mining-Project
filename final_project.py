@@ -125,26 +125,29 @@ accuracy = accuracy_score(y_test, y_pred)
 precision = precision_score(y_test, y_pred)
 recall = recall_score(y_test, y_pred)
 f1 = f1_score(y_test, y_pred)
-print("F1:",f1)
-print("Recall",recall)
-print("Precision:",precision)
+print("F1:", f1)
+print("Recall", recall)
+print("Precision:", precision)
 print("Accuracy:", accuracy)
 
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import make_pipeline
 
-# Perform cross-validation with scaling inside the pipeline
-log_reg = make_pipeline(StandardScaler(), LogisticRegression())
+# Evaluate models using pipelines and cross-validation
+log_reg_pipe = make_pipeline(StandardScaler(), LogisticRegression())
+svm_pipe = make_pipeline(StandardScaler(), svm.SVC(kernel='linear', C=1))
 
-scores = cross_val_score(log_reg, X, y, cv=5, scoring='accuracy')
+log_scores = cross_val_score(log_reg_pipe, X, y, cv=5, scoring='accuracy')
+svm_scores = cross_val_score(svm_pipe, X, y, cv=5, scoring='accuracy')
 
-mean_score = np.mean(scores)
-std_score = np.std(scores)
-print("Cross-validation accuracy: {:.2f} ± {:.2f}".format(mean_score, std_score))
-
-classifier = make_pipeline(StandardScaler(), svm.SVC(kernel='linear', C=1))
-scores = cross_val_score(classifier, X, y, cv=5, scoring='accuracy')
-mean_score = np.mean(scores)
-std_score = np.std(scores)
-print("Cross-validation accuracy for SVM: {:.2f} ± {:.2f}".format(mean_score, std_score))
+print(
+    "Cross-validation accuracy (Logistic Regression): {:.2f} ± {:.2f}".format(
+        np.mean(log_scores), np.std(log_scores)
+    )
+)
+print(
+    "Cross-validation accuracy for SVM: {:.2f} ± {:.2f}".format(
+        np.mean(svm_scores), np.std(svm_scores)
+    )
+)
 
