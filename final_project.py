@@ -105,7 +105,14 @@ print("Recall",recall)
 print("Precision:",precision)
 print("Accuracy:", accuracy)
 
+
+# Split the data for logistic regression
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+# Scale the features before training the model
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
 
 log_reg = LogisticRegression()
 log_reg.fit(X_train, y_train)
@@ -124,8 +131,10 @@ print("Precision:",precision)
 print("Accuracy:", accuracy)
 
 from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import make_pipeline
 
-log_reg = LogisticRegression()
+# Perform cross-validation with scaling inside the pipeline
+log_reg = make_pipeline(StandardScaler(), LogisticRegression())
 
 scores = cross_val_score(log_reg, X, y, cv=5, scoring='accuracy')
 
@@ -133,7 +142,7 @@ mean_score = np.mean(scores)
 std_score = np.std(scores)
 print("Cross-validation accuracy: {:.2f} ± {:.2f}".format(mean_score, std_score))
 
-classifier = svm.SVC(kernel='linear', C=1)
+classifier = make_pipeline(StandardScaler(), svm.SVC(kernel='linear', C=1))
 scores = cross_val_score(classifier, X, y, cv=5, scoring='accuracy')
 mean_score = np.mean(scores)
 std_score = np.std(scores)
